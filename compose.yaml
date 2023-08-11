@@ -1,0 +1,88 @@
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    profiles:
+      - app
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_ENABLE_GZIP=true
+      - GF_USERS_DEFAULT_THEME=light
+      - GF_INSTALL_PLUGINS=redis-datasource
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+  monitor:
+    build:
+      context: ./monitor
+      dockerfile: Containerfile
+    profiles:
+      - app
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8000
+      - BACKEND_URL=/measurements
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Containerfile
+      target: backend
+    profiles:
+      - app
+    volumes:
+      - ./backend/src:/app/src
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=redis
+      - DB_PORT=6379
+    depends_on:
+      - redis
+    command: ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+
+  redis:
+    image: redis/redis-stack:latest
+    profiles:
+      - app
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_ARGS=--save 150 1 --loglevel debug
+    volumes:
+      - redis-data:/data
+
+  test_backend:
+    build:
+      context: ./backend
+      dockerfile: Containerfile
+      target: test_backend
+    profiles:
+      - test
+    volumes:
+      - ./backend/src:/app/src
+    environment:
+      - DB_HOST=test_redis
+      - DB_PORT=6379
+    depends_on:
+      - test_redis
+    command: ["python", "-m", "pytest"]
+
+
+  test_redis:
+    image: redis/redis-stack:latest
+    profiles:
+      - test
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+volumes:
+  redis-data:
