@@ -7,7 +7,7 @@ datasources:
     orgId: 1
     isDefault: true
     version: 1
-    url: redis://redis:6379
+    url: $REDIS_URL
     jsonData:
       poolSize: 5
       timeout: 10

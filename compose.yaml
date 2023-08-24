@@ -4,6 +4,7 @@ services:
     profiles:
       - app
     restart: always
+    env_file: ./grafana/.env
     ports:
       - '3000:3000'
     environment:
@@ -33,17 +34,15 @@ services:
       context: ./backend
       dockerfile: Containerfile
       target: backend
+    env_file: ./backend/src/.env
     profiles:
       - app
     volumes:
       - ./backend/src:/app/src
     ports:
       - "8000:8000"
-    environment:
-      - DB_HOST=redis
-      - DB_PORT=6379
-    depends_on:
-      - redis
+    #depends_on:
+    #  - redis
     command: ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
 
   redis:
