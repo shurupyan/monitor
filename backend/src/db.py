@@ -12,7 +12,7 @@ NONE_TYPE = b"none"
 KEY_PREFIX = "speedtest"
 
 
-async def get_or_create_ts_key(labels: dict = None) -> str | None:
+async def get_or_create_ts_key(labels: dict = None) -> str:
     if labels:
         key = f'{KEY_PREFIX}:{":".join(labels.values())}'
     else:

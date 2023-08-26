@@ -1,0 +1,18 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: backend
+    src: ./
+    engine: python3.9
+    primary: true
+    run: export PYTHONPATH="${PYTHONPATH}:${PWD}/src" && export && uvicorn src.main:app
+    public_routes:
+      - "/*"
+    presets:
+      env:
+        - name: DB_HOST
+          default: "rediscloud.redislabs.com"
+        - name: DB_PORT
+          default: "17738"
+        - name: DB_PASSWORD
+          default: "password"
