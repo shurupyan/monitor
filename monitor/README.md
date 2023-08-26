@@ -2,9 +2,16 @@
 * Install the `entware` 
 [OPKG](https://help.keenetic.com/hc/en-us/articles/360000948719-OPKG) to the `KeeneticOS` following this 
 [instruction](https://help.keenetic.com/hc/en-us/articles/360021888880-Installing-OPKG-Entware-in-the-router-s-internal-memory) 
+* After that you can connect to the router SSH using the following command
+
+
+    ssh root@192.168.1.1 -p 222
+with `keenetic` password by default
+
 * After that you can install the packages you need from the 
 [repositoritory](http://bin.entware.net/mipssf-k3.4/Packages.html) and 
 [additional repo](http://bin.entware.net/mipselsf-k3.4/keenetic/Packages.html)
+
 * Install the `wget-ssl` package using the following command:
     
 

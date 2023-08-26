@@ -26,9 +26,7 @@ services:
     depends_on:
       - backend
     environment:
-      - BACKEND_HOST=backend
-      - BACKEND_PORT=8000
-      - BACKEND_URL=/measurements
+      - BACKEND_URL=http://backend:8000/measurements
   backend:
     build:
       context: ./backend
@@ -41,8 +39,8 @@ services:
       - ./backend/src:/app/src
     ports:
       - "8000:8000"
-    #depends_on:
-    #  - redis
+    depends_on:
+      - redis
     command: ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
 
   redis:
